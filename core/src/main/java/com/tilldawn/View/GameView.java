@@ -1,0 +1,189 @@
+package com.tilldawn.View;
+
+import java.security.Key;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.tilldawn.Control.GameController;
+import com.tilldawn.Control.PlayerController;
+import com.tilldawn.Control.WeaponController;
+import com.tilldawn.Control.WorldController;
+import com.tilldawn.Model.App;
+import com.tilldawn.Model.Game;
+import com.tilldawn.Model.Player;
+import com.tilldawn.Model.Weapon;
+import com.tilldawn.Model.World;
+import com.tilldawn.Model.Enum.GameTime;
+import com.tilldawn.Model.Enum.HeroType;
+import com.tilldawn.Model.Enum.Menu;
+import com.tilldawn.Model.Enum.WeaponType;
+import com.tilldawn.Main;
+
+public class GameView extends View implements InputProcessor {
+
+    private Stage stage;
+    private GameController controller;
+
+    public GameView(Skin skin, GameTime gameTime, HeroType heroType, WeaponType weaponType) {
+        stage = new Stage();
+
+        Game game = new Game(gameTime.getTime());
+
+        Player player = new Player(heroType);
+        PlayerController playerController = new PlayerController(player);
+
+        World world = new World();
+        WorldController worldController = new WorldController(playerController, world);
+
+        Weapon weapon = new Weapon(weaponType);
+        WeaponController weaponController = new WeaponController(weapon);
+
+        controller = new GameController(game, playerController, worldController, weaponController);
+
+    }
+
+    @Override
+    public void show() {
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(this);
+
+        Label timeLabel = new Label(
+                String.format("Time: %02d:%02d", controller.getGame().getRemainingTime() / 60,
+                        controller.getGame().getRemainingTime() % 60),
+                App.getSkin());
+        Label killsLabel = new Label("Kills: " + controller.getGame().getKills(), App.getSkin());
+        Label ammoLabel = new Label("Ammo: " + controller.getWeaponController().getWeapon().getAmmo() + "/"
+                + controller.getWeaponController().getWeapon().getType().getMaxAmmo(), App.getSkin());
+        Label HPLabel = new Label("HP: " + controller.getPlayerController().getPlayer().getHealth(), App.getSkin());
+        Label levelLabel = new Label("Level: " + controller.getPlayerController().getPlayer().getLevel(),
+                App.getSkin());
+
+        Table table = new Table();
+
+        table.top();
+        table.setFillParent(true);
+        table.add(timeLabel).expandX().padTop(10);
+        table.add(killsLabel).expandX().padTop(10);
+        table.add(ammoLabel).expandX().padTop(10);
+        table.add(HPLabel).expandX().padTop(10);
+        table.add(levelLabel).expandX().padTop(10);
+
+        stage.addActor(table);
+
+
+    }
+
+    @Override
+    public void render(float v) {
+        ScreenUtils.clear(0, 0, 0, 1);
+        Main.getBatch().begin();
+        controller.updateGame();
+        show();
+        Main.getBatch().end();
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        stage.draw();
+
+    }
+
+    @Override
+    public void resize(int i, int i1) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Override
+    public boolean keyDown(int i) {
+        if (i == Keys.Q) {
+            Main.changeMenu(Menu.PRE_GAME_MENU);
+            return true;
+        }
+        if (i == Keys.R) {
+            controller.getWeaponController().handleWeaponReload();
+            return true;
+        }
+        if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.S) || 
+            Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.D)) {
+            controller.handlePlayerMovement(i);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int i) {
+        if (i == Keys.W || i == Keys.S || i == Keys.A || i == Keys.D) {
+            controller.handlePlayerIdle(i);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char c) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int i, int i1, int i2, int i3) {
+        controller.getWeaponController().handleWeaponShoot(i, i1);
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int i, int i1, int i2, int i3) {
+        return false;
+    }
+
+    @Override
+    public boolean touchCancelled(int i, int i1, int i2, int i3) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int i, int i1, int i2) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int i, int i1) {
+        controller.getWeaponController().handleWeaponRotation(i, i1);
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(float v, float v1) {
+        return false;
+    }
+
+}
