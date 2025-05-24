@@ -37,7 +37,7 @@ public class GameView extends View implements InputProcessor {
     private GameController controller;
 
     public GameView(Skin skin, GameTime gameTime, HeroType heroType, WeaponType weaponType) {
-        stage = new Stage();
+        stage = new Stage(new ScreenViewport());
 
         Game game = new Game(gameTime.getTime());
 
@@ -56,7 +56,7 @@ public class GameView extends View implements InputProcessor {
 
     @Override
     public void show() {
-        stage = new Stage(new ScreenViewport());
+        // stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this);
 
         Label timeLabel = new Label(
@@ -82,7 +82,6 @@ public class GameView extends View implements InputProcessor {
 
         stage.addActor(table);
 
-
     }
 
     @Override
@@ -90,7 +89,12 @@ public class GameView extends View implements InputProcessor {
         ScreenUtils.clear(0, 0, 0, 1);
         Main.getBatch().begin();
         controller.updateGame();
-        show();
+        
+        // stage.getCamera().position.set(controller.getPlayerController().getPlayer().getX(), 
+        //         controller.getPlayerController().getPlayer().getY(), 0);
+        // stage.getCamera().update();
+
+        // show();
         Main.getBatch().end();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
@@ -132,8 +136,8 @@ public class GameView extends View implements InputProcessor {
             controller.getWeaponController().handleWeaponReload();
             return true;
         }
-        if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.S) || 
-            Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.D)) {
+        if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.S) ||
+                Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.D)) {
             controller.handlePlayerMovement(i);
             return true;
         }
