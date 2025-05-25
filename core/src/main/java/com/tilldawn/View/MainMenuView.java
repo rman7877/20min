@@ -38,6 +38,7 @@ public class MainMenuView extends View {
 
     private Image avatar;
     private Label usernameLabel;
+    private Label scoreLabel;
 
     private final MainMenuController controller;
 
@@ -55,12 +56,15 @@ public class MainMenuView extends View {
         resumeSavedButton = new TextButton("Resume Saved Game", skin);
         logoutButton = new TextButton("Logout", skin);
 
+
         if (App.isGuest()) {
             avatar = Avatar.AVATAR10.getImage();
             usernameLabel = new Label("Guest", skin);
+            scoreLabel = new Label("", skin);
         } else if (App.getUser() != null) {
             avatar = App.getUser().getAvatar();
             usernameLabel = new Label(App.getUser().getUsername(), skin);
+            scoreLabel = new Label("Score: " + App.getUser().getScore(), skin);
         }
 
         table = new Table();
@@ -136,6 +140,8 @@ public class MainMenuView extends View {
         leftTable.add(avatar).width(300).height(300).expand().center().padBottom(50);
         leftTable.row();
         leftTable.add(usernameLabel).expand().center().padBottom(50);
+        leftTable.row();
+        leftTable.add(scoreLabel).expand().center().padBottom(50);
 
         Table rightTable = new Table();
         rightTable.add(settingsButton).padBottom(20);

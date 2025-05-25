@@ -26,6 +26,7 @@ import com.tilldawn.Model.Game;
 import com.tilldawn.Model.Player;
 import com.tilldawn.Model.Weapon;
 import com.tilldawn.Model.World;
+import com.tilldawn.Model.Enum.Ability;
 import com.tilldawn.Model.Enum.GameTime;
 import com.tilldawn.Model.Enum.HeroType;
 import com.tilldawn.Model.Enum.Menu;
@@ -34,10 +35,14 @@ import com.tilldawn.Main;
 
 public class GameView extends View implements InputProcessor {
 
+    private static GameView gameView;
+
     private Stage stage;
     private GameController controller;
 
     private OrthographicCamera camera;
+
+    private boolean isPaused = false;
 
     public GameView(Skin skin, GameTime gameTime, HeroType heroType, WeaponType weaponType) {
 
@@ -50,7 +55,7 @@ public class GameView extends View implements InputProcessor {
         World world = new World();
         Weapon weapon = new Weapon(weaponType);
 
-        Game game = new Game(gameTime.getTime(), player, weapon, world, camera);
+        Game game = new Game(gameTime.getTime(), player, weapon, world, camera, this);
         PlayerController playerController = new PlayerController(player);
         WorldController worldController = new WorldController(playerController, world);
         WeaponController weaponController = new WeaponController(weapon);
@@ -59,6 +64,16 @@ public class GameView extends View implements InputProcessor {
 
         game.setController(controller);
 
+        gameView = this;
+
+    }
+
+    public static GameView getGameView() {
+        // if (gameView == null) {
+        // gameView = new GameView(App.getApp().getSkin(), GameTime.NORMAL,
+        // HeroType.WARRIOR, WeaponType.SWORD);
+        // }
+        return gameView;
     }
 
     @Override
@@ -70,6 +85,13 @@ public class GameView extends View implements InputProcessor {
 
     @Override
     public void render(float v) {
+
+        if (isPaused || Game.getGame().abilityMenu) {
+            Game.getGame().pauseGame();
+            Main.changeMenu(Menu.PAUSE_MENU);
+            return;
+        }
+
         ScreenUtils.clear(0, 0, 0, 1);
 
         camera.position.set(controller.getPlayerController().getPlayer().getX(),
@@ -81,11 +103,18 @@ public class GameView extends View implements InputProcessor {
         Main.getBatch().setProjectionMatrix(camera.combined);
 
         Main.getBatch().begin();
-        controller.updateGame(stage,v);
+        controller.updateGame(stage, v);
 
         Main.getBatch().end();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
+
+        // if (Game.getGame().abilityMenu == true) {
+        // App.showDialog("Abilities", () -> {
+        // Game.getGame().abilityMenu = false;
+        // Game.getGame().resumeGame();
+        // }, stage);
+        // }
 
     }
 
@@ -116,16 +145,79 @@ public class GameView extends View implements InputProcessor {
 
     @Override
     public boolean keyDown(int i) {
+        if (i == Keys.E) {
+            controller.getWorldController().generateElder();
+            return true;
+        }
+        if (i == Keys.H) {
+            Game.getGame().getPlayer().increaseHealth(1);
+            return true;
+        }
+        if (i == Keys.T) {
+            Game.getGame().decreaseRemainingTime(60);
+        }
+        if (i == Keys.L) {
+            Player player = Game.getGame().getPlayer();
+            player.increaseXp(player.XPNeededForNextLevel() - player.XPGainedForNextLevel());
+            return true;
+        }
+        if (i == Keys.I) {
+            Game.getGame().getPlayer().setHealth(10000);
+            return true;
+        }
+
         if (i == Keys.Q) {
             Main.changeMenu(Menu.PRE_GAME_MENU);
             return true;
         }
-        if (i == Keys.G) {
-            controller.getWorldController().generateElder();
+        if (i == Keys.B) {
+            controller.getWorldController().generateEyebat();
+            return true;
+        }
+        if (i == Keys.Z) {
+            Ability.SPEEDY.setAbility(Game.getGame().getPlayer(),
+                    Game.getGame().getController().getWeaponController().getWeapon());
+            return true;
+        }
+        if (i == Keys.X) {
+            Ability.AMOCREASE.setAbility(Game.getGame().getPlayer(),
+                    Game.getGame().getController().getWeaponController().getWeapon());
+            return true;
+        }
+        if (i == Keys.C) {
+            Ability.DAMAGER.setAbility(Game.getGame().getPlayer(),
+                    Game.getGame().getController().getWeaponController().getWeapon());
+            return true;
+        }
+        if (i == Keys.V) {
+            Ability.PROCREASE.setAbility(Game.getGame().getPlayer(),
+                    Game.getGame().getController().getWeaponController().getWeapon());
+            return true;
+        }
+        if (i == Keys.F) {
+            Ability.VITALITY.setAbility(Game.getGame().getPlayer(),
+                    Game.getGame().getController().getWeaponController().getWeapon());
+            return true;
+        }
+
+        if (i == Keys.U) {
+            controller.getWorldController().generateTentacleMonster();
             return true;
         }
         if (i == Keys.R) {
             controller.getWeaponController().handleWeaponReload();
+            return true;
+        }
+        if (i == Keys.P) {
+            isPaused = !isPaused;
+            if (isPaused) {
+                // Gdx.input.setInputProcessor(null); // Disable input processing
+                Game.getGame().pauseGame();
+            } else {
+                // Gdx.input.setInputProcessor(this); // Re-enable input processing
+                Game.getGame().resumeGame();
+            }
+
             return true;
         }
         if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.S) ||
@@ -184,6 +276,18 @@ public class GameView extends View implements InputProcessor {
     @Override
     public boolean scrolled(float v, float v1) {
         return false;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Skin getSkin() {
+        return App.getSkin();
+    }
+
+    public void setIspaused(boolean isPaused) {
+        this.isPaused = isPaused;
     }
 
 }

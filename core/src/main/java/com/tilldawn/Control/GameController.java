@@ -4,11 +4,14 @@ import java.security.Key;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.tilldawn.Model.App;
 import com.tilldawn.Model.Game;
+import com.tilldawn.Model.Player;
 
 public class GameController {
 
@@ -26,7 +29,7 @@ public class GameController {
         this.weaponController = weaponController;
     }
 
-    public void updateGame(Stage stage,float delta) {
+    public void updateGame(Stage stage, float delta) {
         float playerX = playerController.getPlayer().getX();
         float playerY = playerController.getPlayer().getY();
 
@@ -35,8 +38,24 @@ public class GameController {
         weaponController.update(playerX, playerY);
 
         updateLabels(stage);
+
+        // if (game.abilityMenu) {
+        //     game.pauseGame();
+        //     App.showDialog("test", () -> {
+        //         game.abilityMenu = false;
+        //         game.resumeGame();
+        //     }, stage);
+        // }
+
     }
 
+    public void pauseGame() {
+        Game.getGame().stopTimer();
+    }
+
+    public void resumeGame() {
+        Game.getGame().resumeTimer();
+    }
 
     public int mouseX = 0;
     public int mouseY = 0;
@@ -49,29 +68,51 @@ public class GameController {
 
     public void updateLabels(Stage stage) {
         stage.clear();
+        Player player = getPlayerController().getPlayer();
+
         Label timeLabel = new Label(
                 String.format("Time: %02d:%02d", getGame().getRemainingTime() / 60,
                         getGame().getRemainingTime() % 60),
                 App.getSkin());
         Label killsLabel = new Label("Kills: " + getGame().getKills(), App.getSkin());
         Label ammoLabel = new Label("Ammo: " + getWeaponController().getWeapon().getAmmo() + "/"
-                + getWeaponController().getWeapon().getType().getMaxAmmo(), App.getSkin());
-        Label HPLabel = new Label("HP: " + getPlayerController().getPlayer().getHealth(), App.getSkin());
-        Label levelLabel = new Label("Level: " + getPlayerController().getPlayer().getLevel(),
+                + getWeaponController().getWeapon().getMaxAmmo(), App.getSkin());
+        Label HPLabel = new Label("HP: " + player.getHealth(), App.getSkin());
+        Label levelLabel = new Label("Level: " + player.getLevel(),
                 App.getSkin());
+        Label XPLabel = new Label("XP: " + player.getXp(), App.getSkin());
 
-        Label playerX = new Label("Player X: " + getPlayerController().getPlayer().getX(), App.getSkin());
-        Label playerY = new Label("Player Y: " + getPlayerController().getPlayer().getY(), App.getSkin());
+        Label playerX = new Label("Player X: " + player.getX(), App.getSkin());
+        Label playerY = new Label("Player Y: " + player.getY(), App.getSkin());
 
-        // Label treeX = new Label("Tree X: " + getWorldController().getWorld().getEnemies().get(0).getRect().getX(),
-        //         App.getSkin());
-        // Label treeY = new Label("Tree Y: " + getWorldController().getWorld().getEnemies().get(0).getRect().getY(),
-        //         App.getSkin());
+        int playerXP = player.XPGainedForNextLevel();
+        int neededXP = player.XPNeededForNextLevel();
+        float progress = (float) playerXP / neededXP;
+        ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle();
+        progressBarStyle.background = App.getSkin().newDrawable("white", Color.DARK_GRAY);
+        progressBarStyle.knob = App.getSkin().newDrawable("white", Color.GREEN);
+        progressBarStyle.knobBefore = App.getSkin().newDrawable("white", Color.GREEN);
+
+        ProgressBar xpProgressBar = new ProgressBar(0, 1, 0.01f, false, progressBarStyle);
+        xpProgressBar.setValue(progress);
+        xpProgressBar.setAnimateDuration(0.25f);
+
+        // Label playerXPLabel = new Label("Player XP: " + playerXP, App.getSkin());
+        // Label neededXPLabel = new Label("Needed XP: " + neededXP, App.getSkin());
+
+        // Label treeX = new Label("Tree X: " +
+        // getWorldController().getWorld().getEnemies().get(0).getRect().getX(),
+        // App.getSkin());
+        // Label treeY = new Label("Tree Y: " +
+        // getWorldController().getWorld().getEnemies().get(0).getRect().getY(),
+        // App.getSkin());
 
         // Label mouseXLabel = new Label("Mouse X: " + mouseX, App.getSkin());
         // Label mouseYLabel = new Label("Mouse Y: " + mouseY, App.getSkin());
-        // Label graphicsMiddleXLabel = new Label("Graphics Middle X: " + (graphicsMiddleX - mouseX), App.getSkin());
-        // Label graphicsMiddleYLabel = new Label("Graphics Middle Y: " + (graphicsMiddleY - mouseY), App.getSkin());
+        // Label graphicsMiddleXLabel = new Label("Graphics Middle X: " +
+        // (graphicsMiddleX - mouseX), App.getSkin());
+        // Label graphicsMiddleYLabel = new Label("Graphics Middle Y: " +
+        // (graphicsMiddleY - mouseY), App.getSkin());
 
         // Label angleLabel = new Label("Angle: " + angle, App.getSkin());
         // Label bulletXLabel = new Label("Bullet X: " + bulletX, App.getSkin());
@@ -86,10 +127,17 @@ public class GameController {
         table.add(ammoLabel).expandX().padTop(10);
         table.add(HPLabel).expandX().padTop(10);
         table.add(levelLabel).expandX().padTop(10);
+        table.add(XPLabel).expandX().padTop(10);
+
+        // table.row();
+        // table.add(playerX).expandX().padTop(10);
+        // table.add(playerY).expandX().padTop(10);
 
         table.row();
-        table.add(playerX).expandX().padTop(10);
-        table.add(playerY).expandX().padTop(10);
+        table.add(new Label("XP Progress: ", App.getSkin())).expandX().padTop(10);
+        table.add(xpProgressBar).expandX().padTop(10).width(200);
+        // table.add(playerXPLabel).expandX().padTop(10);
+        // table.add(neededXPLabel).expandX().padTop(10);
         // table.add(treeX).expandX().padTop(10);
         // table.add(treeY).expandX().padTop(10);
 

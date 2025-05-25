@@ -17,6 +17,8 @@ public class World {
     private ArrayList<TentacleMonster> tentacleMonsters;
     private ArrayList<Eyebat> eyebats;
 
+    private ArrayList<Seed> seeds;
+
     private Elder elder;
 
     private ArrayList<Bullet> eyebatBullets;
@@ -27,6 +29,7 @@ public class World {
         this.eyebats = new ArrayList<>();
         this.enemies = new ArrayList<>();
         this.eyebatBullets = new ArrayList<>();
+        this.seeds = new ArrayList<>();
         elder = null;
     }
 
@@ -72,6 +75,18 @@ public class World {
         return eyebatBullets;
     }
 
+    public ArrayList<Seed> getSeeds() {
+        return seeds;
+    }
+
+    public void addSeed(Seed seed) {
+        seeds.add(seed);
+    }
+
+    public void removeSeed(Seed seed) {
+        seeds.remove(seed);
+    }
+
     public void addEyebatBullet(Bullet bullet) {
         eyebatBullets.add(bullet);
     }
@@ -83,6 +98,19 @@ public class World {
     public void setElder(Elder elder) {
         this.elder = elder;
         enemies.add(elder);
+    }
+
+    public void removeEnemy(Enemy enemy) {
+        enemies.remove(enemy);
+        if (enemy instanceof Tree) {
+            trees.remove(enemy);
+        } else if (enemy instanceof TentacleMonster) {
+            tentacleMonsters.remove(enemy);
+        } else if (enemy instanceof Eyebat) {
+            eyebats.remove(enemy);
+        } else if (enemy instanceof Elder) {
+            elder = null;
+        }
     }
 
 }

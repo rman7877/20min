@@ -19,7 +19,8 @@ public class GameAssetManager {
 
     private final String tentacleMonsterPath = "assets/Sprite/TentacleIdle/TentacleIdle_0.png";
     private final int tentacleMonsterFrameCount = 4;
-    private final Animation<Sprite> tentacleMonsterAnimation = getAnimationByFirstSprite(tentacleMonsterPath, tentacleMonsterFrameCount);
+    private final Animation<Sprite> tentacleMonsterAnimation = getAnimationByFirstSprite(tentacleMonsterPath,
+            tentacleMonsterFrameCount);
 
     private final String eyebatPath = "assets\\Sprite\\T\\T_EyeBat_0.png";
     private final int eyebatFrameCount = 4;
@@ -27,7 +28,9 @@ public class GameAssetManager {
 
     private final String eyebatBulletPath = "assets\\Sprite\\T\\T_EyeBat_EM.png";
 
-    private final String elderPath= "assets\\Sprite\\ElderBrain\\ElderBrain.png";
+    private final String elderPath = "assets\\Sprite\\ElderBrain\\ElderBrain.png";
+
+    private final String seedPath = "assets\\Sprite\\T\\T_Cultist_EM.png";
 
     private final String backgroundPath = "assets/background.png";
 
@@ -37,8 +40,6 @@ public class GameAssetManager {
         }
         return gameAssetManager;
     }
-
-
 
     public Skin getSkin() {
         return skin;
@@ -86,6 +87,10 @@ public class GameAssetManager {
 
     public Sprite getElderSprite() {
         return getSpriteByPath(elderPath);
+    }
+
+    public Sprite getSeedSprite() {
+        return getSpriteByPath(seedPath);
     }
 
     public Sprite getSpriteByPath(String path) {

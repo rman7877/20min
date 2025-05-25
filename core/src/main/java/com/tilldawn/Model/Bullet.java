@@ -17,10 +17,11 @@ public class Bullet {
 
     private int speed = 5;
 
-    public Bullet(Sprite sprite, CollisionRect rect, Vector2 direction) {
+    public Bullet(Sprite sprite, CollisionRect rect, Vector2 direction, int damage) {
         this.sprite = sprite;
         this.rect = rect;
         this.direction = direction;
+        this.damage = damage;
     }
 
     public void update() {

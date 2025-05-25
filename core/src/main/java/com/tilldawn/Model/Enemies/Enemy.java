@@ -99,5 +99,13 @@ public abstract class Enemy {
         getRect().setY(getRect().getY() + deltaY);
     }
 
+    public void takeDamage(int damage) {
+        hp -= damage;
+        if (hp <= 0) {
+            Game.getGame().getWorld().removeEnemy(this);
+            Game.getGame().getController().getWorldController().dropSeed(getRect().getX(), getRect().getY());
+        }
+    }
+
 
 }

@@ -1,5 +1,7 @@
 package com.tilldawn.Control;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -9,6 +11,8 @@ import com.tilldawn.Model.Bullet;
 import com.tilldawn.Model.CollisionRect;
 import com.tilldawn.Model.Game;
 import com.tilldawn.Model.GameAssetManager;
+import com.tilldawn.Model.Player;
+import com.tilldawn.Model.Seed;
 import com.tilldawn.Model.World;
 import com.tilldawn.Model.Enemies.Elder;
 import com.tilldawn.Model.Enemies.Enemy;
@@ -38,13 +42,37 @@ public class WorldController {
         Main.getBatch().draw(backgroundSprite, backgroundSprite.getX(), backgroundSprite.getY());
         updateEnemies(delta);
         updateEyebatBullets();
+        updateSeeds();
+
         // Update world state
     }
 
+    public void updateSeeds() {
+        Iterator<Seed> seedIterator = world.getSeeds().iterator();
+        while (seedIterator.hasNext()) {
+            Seed seed = seedIterator.next();
+            seed.getSprite().draw(Main.getBatch());
+            // Check if the seed touches the player
+            if (seed.getRect().intersects(playerController.getPlayer().getRect())) {
+                playerController.getPlayer().increaseXp(3);
+                seedIterator.remove(); // Safely remove seed during iteration
+            }
+        }
+    }
+
     public void updateEyebatBullets() {
-        for (Bullet bullet : world.getEyebatBullets()) {
+        Iterator<Bullet> bulletIterator = world.getEyebatBullets().iterator();
+        while (bulletIterator.hasNext()) {
+
+            Bullet bullet = bulletIterator.next();
+
             bullet.update();
             bullet.draw();
+            // Check if the bullet touches the player
+            if (bullet.getRect().intersects(playerController.getPlayer().getRect())) {
+                playerController.getPlayer().takeDamage(bullet.getDamage());
+                bulletIterator.remove(); // Safely remove bullet during iteration
+            }
         }
     }
 
@@ -56,11 +84,24 @@ public class WorldController {
             if (!(enemy instanceof Elder)) {
                 Animation<Sprite> enemyAnimation = enemy.getAnimation();
                 showAnimation(enemyAnimation, enemy);
-            }
-            else
-            {
+            } else {
                 Elder elder = (Elder) enemy;
                 elder.dash();
+            }
+            // check if the enemy touches the player
+            if (enemy.getRect().intersects(playerController.getPlayer().getRect()) && !playerController.getPlayer().isInvincible()) {
+                Player player = playerController.getPlayer();
+                player.takeDamage(1);
+                player.setInvincible(true);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1000);
+                        player.setInvincible(false);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+                
             }
         }
     }
@@ -144,18 +185,21 @@ public class WorldController {
         world.setElder(new Elder(elderSprite, null, rect)); // Assuming Elder is an Enemy with no animation
     }
 
+    public void dropSeed(float x, float y) {
+
+        Sprite seedSprite = GameAssetManager.getGameAssetManager().getSeedSprite();
+        seedSprite.setPosition(x, y);
+        seedSprite.setSize(20, 20);
+
+        CollisionRect rect = new CollisionRect(x, y, seedSprite.getWidth(), seedSprite.getHeight());
+
+        world.addSeed(new Seed(seedSprite, rect));
+
+    }
+
     public void throwEyebatBullet() {
         for (Eyebat eyebat : world.getEyebats()) {
-
             eyebat.throwBullet();
-            // if (eyebat.getTime() >= 1.0f) { // Check if enough time has passed to throw a
-            // bullet
-            // eyebat.throwBullet();
-            // eyebat.setTime(0); // Reset the time after throwing a bullet
-            // } else {
-            // eyebat.setTime(eyebat.getTime() + Gdx.graphics.getDeltaTime());
-            // }
-
         }
     }
 

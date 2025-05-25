@@ -38,19 +38,20 @@ public class Eyebat extends Enemy {
                 bulletSprite.getHeight());
 
         // float angle = getAngle();
-        // Vector2 direction = new Vector2(MathUtils.cos(angle), MathUtils.sin(angle)).nor();
+        // Vector2 direction = new Vector2(MathUtils.cos(angle),
+        // MathUtils.sin(angle)).nor();
 
-        Vector2 start= new Vector2(bulletSprite.getX(), -bulletSprite.getY());
+        Vector2 start = new Vector2(bulletSprite.getX(), -bulletSprite.getY());
         Vector2 player = new Vector2(Game.getGame().getPlayer().getX(),
                 -Game.getGame().getPlayer().getY());
 
         Vector2 direction = player.sub(start).nor(); // Normalize the direction vector
 
-//        Game.getGame().getController().angle = MathUtils.radiansToDegrees * angle;
+        // Game.getGame().getController().angle = MathUtils.radiansToDegrees * angle;
         Game.getGame().getController().bulletX = bulletSprite.getX();
         Game.getGame().getController().bulletY = bulletSprite.getY();
 
-        Game.getGame().getWorld().addEyebatBullet(new Bullet(bulletSprite, bulletRect, direction));
+        Game.getGame().getWorld().addEyebatBullet(new Bullet(bulletSprite, bulletRect, direction, 1));
     }
 
 }

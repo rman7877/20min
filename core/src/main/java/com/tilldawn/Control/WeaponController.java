@@ -1,6 +1,7 @@
 package com.tilldawn.Control;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,6 +13,8 @@ import com.tilldawn.Model.CollisionRect;
 import com.tilldawn.Model.Game;
 import com.tilldawn.Model.GameAssetManager;
 import com.tilldawn.Model.Weapon;
+import com.tilldawn.Model.Enemies.Enemy;
+import com.tilldawn.Model.Enemies.Tree;
 
 public class WeaponController {
 
@@ -30,8 +33,17 @@ public class WeaponController {
     }
 
     public void handleWeaponReload() {
-        if (weapon.getAmmo() < weapon.getType().getMaxAmmo()) {
-            weapon.setAmmo(weapon.getType().getMaxAmmo());
+        if (weapon.getAmmo() < weapon.getMaxAmmo()) {
+            weapon.setAmmo(weapon.getMaxAmmo());
+            weapon.setReloading(true);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                    weapon.setReloading(false);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
 
@@ -55,7 +67,7 @@ public class WeaponController {
     }
 
     public void handleWeaponShoot(int x, int y) {
-        if (weapon.getAmmo() > 0) {
+        if (weapon.getAmmo() > 0 && !weapon.isReloading()) {
 
             float weaponX = Game.getGame().getWeapon().getX();
             float weaponY = Game.getGame().getWeapon().getY();
@@ -70,18 +82,36 @@ public class WeaponController {
             CollisionRect bulletRect = new CollisionRect(bulletSprite.getX(), bulletSprite.getY(),
                     bulletSprite.getWidth(), bulletSprite.getHeight());
 
-            Bullet bullet = new Bullet(bulletSprite, bulletRect, direction);
+            Bullet bullet = new Bullet(bulletSprite, bulletRect, direction, weapon.getDamage());
             bullets.add(bullet);
 
-            weapon.setAmmo(weapon.getAmmo() - 1);
+            weapon.decreaseAmmo();
+            if (weapon.isAutoReload() && weapon.getAmmo() <= 0) {
+                handleWeaponReload();
+            }
         }
     }
 
     public void updateBullets() {
-        for (Bullet bullet : bullets) {
+        Iterator<Bullet> bulletIterator = bullets.iterator();
+        while (bulletIterator.hasNext()) {
+            Bullet bullet = bulletIterator.next();
             bullet.update();
             bullet.draw();
+
+            Iterator<Enemy> enemyIterator = Game.getGame().getWorld().getEnemies().iterator();
+            while (enemyIterator.hasNext()) {
+
+                Enemy enemy = enemyIterator.next();
+
+                if (!(enemy instanceof Tree) && bullet.getRect().intersects(enemy.getRect())) {
+                    enemy.takeDamage(bullet.getDamage());
+                    bulletIterator.remove();
+                    break;
+                }
+            }
         }
+
     }
 
     public Weapon getWeapon() {

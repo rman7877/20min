@@ -6,6 +6,8 @@ import java.util.TimerTask;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.tilldawn.Control.GameController;
+import com.tilldawn.Model.Enum.GameTime;
+import com.tilldawn.View.GameView;
 
 public class Game {
 
@@ -23,6 +25,10 @@ public class Game {
     private Timer timer;
 
     private GameController controller;
+
+    public boolean abilityMenu = false;
+
+    GameView gameView;
 
     public void startTimer() {
         timer = new Timer();
@@ -54,6 +60,29 @@ public class Game {
         }, 0, 1000); // Schedule task to run every 1 second
     }
 
+    public void pauseTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    public void resumeTimer() {
+        if (timer == null) {
+            startTimer();
+        }
+    }
+
+    public void pauseGame() {
+        pauseTimer();
+        gameView.setIspaused(true);
+    }
+
+    public void resumeGame() {
+        resumeTimer();
+        gameView.setIspaused(false);
+    }
+
     private void checkTentacleMonsterRespawn() {
         int count = getTime() / 30;
         if (count > 0)
@@ -62,9 +91,17 @@ public class Game {
             });
     }
 
+
+    public void decreaseRemainingTime(int amount) {
+        this.remainingTime -= amount;
+        if (this.remainingTime < 0) {
+            this.remainingTime = 0;
+        }
+    }
+
     private void checkEyebatRespawn() {
         if (remainingTime % 10 == 0) {
-            int count = (getTime() - getGameTime() + 30) / 30;
+            int count = (getTime() * 4 - getGameTime() + 30) / 30;
             if (count > 0)
                 Gdx.app.postRunnable(() -> {
                     controller.getWorldController().generateEyebat(count);
@@ -78,7 +115,7 @@ public class Game {
         });
     }
 
-    public Game(int gameTime, Player player, Weapon weapon, World world, OrthographicCamera camera) {
+    public Game(int gameTime, Player player, Weapon weapon, World world, OrthographicCamera camera, GameView gameView) {
         this.gameTime = gameTime;
         this.remainingTime = gameTime;
         this.kills = 0;
@@ -86,12 +123,21 @@ public class Game {
         this.weapon = weapon;
         this.world = world;
         this.camera = camera;
+        this.gameView = gameView;
         startTimer();
         game = this;
     }
 
     public static Game getGame() {
         return game;
+    }
+
+    public static void setGame(Game game) {
+        Game.game = game;
+    }
+
+    public GameView getGameView() {
+        return gameView;
     }
 
     public int getTime() {
