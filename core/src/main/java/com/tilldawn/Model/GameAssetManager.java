@@ -16,6 +16,12 @@ public class GameAssetManager {
     private final String treePath = "assets/Sprite/T/T_TreeMonster_0.png";
     private final int treeFrameCount = 3;
 
+    private final String tentacleMonsterPath = "assets/Sprite/TentacleIdle/TentacleIdle_0.png";
+    private final int tentacleMonsterFrameCount = 4;
+
+    private final String eyebatPath="assets\\Sprite\\T\\T_EyeBat_0.png";
+    private final int eyebatFrameCount = 4;
+
     private final String backgroundPath = "assets/background.png";
 
     public static GameAssetManager getGameAssetManager() {
@@ -43,6 +49,22 @@ public class GameAssetManager {
 
     public Sprite getTreeSprite() {
         return getSpriteByPath(treePath);
+    }
+
+    public Animation<Sprite> getTentacleMonsterAnimation() {
+        return getAnimationByFirstSprite(tentacleMonsterPath, tentacleMonsterFrameCount);
+    }
+
+    public Sprite getTentacleMonsterSprite() {
+        return getSpriteByPath(tentacleMonsterPath);
+    }
+
+    public Animation<Sprite> getEyebatAnimation() {
+        return getAnimationByFirstSprite(eyebatPath, eyebatFrameCount);
+    }
+
+    public Sprite getEyebatSprite() {
+        return getSpriteByPath(eyebatPath);
     }
 
     public Sprite getBackgroundSprite() {

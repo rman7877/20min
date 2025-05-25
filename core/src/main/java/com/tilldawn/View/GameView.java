@@ -57,6 +57,8 @@ public class GameView extends View implements InputProcessor {
 
         controller = new GameController(game, playerController, worldController, weaponController);
 
+        game.setController(controller);
+
     }
 
     @Override
@@ -116,6 +118,10 @@ public class GameView extends View implements InputProcessor {
     public boolean keyDown(int i) {
         if (i == Keys.Q) {
             Main.changeMenu(Menu.PRE_GAME_MENU);
+            return true;
+        }
+        if (i == Keys.G) {
+            controller.getWorldController().generateEyebat(1);
             return true;
         }
         if (i == Keys.R) {

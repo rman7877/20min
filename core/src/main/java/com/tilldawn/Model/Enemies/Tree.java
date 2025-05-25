@@ -7,7 +7,6 @@ import com.tilldawn.Model.GameAssetManager;
 
 public class Tree extends Enemy {
 
-
     public Tree(Sprite sprite, Animation<Sprite> animation, CollisionRect rect) {
         super(sprite, animation, rect);
     }
