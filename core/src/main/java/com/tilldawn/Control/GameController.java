@@ -1,14 +1,18 @@
 package com.tilldawn.Control;
 
 import java.security.Key;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.tilldawn.Main;
+import com.tilldawn.Model.Anime;
 import com.tilldawn.Model.App;
 import com.tilldawn.Model.Game;
 import com.tilldawn.Model.Player;
@@ -18,6 +22,8 @@ public class GameController {
     private PlayerController playerController;
     private WorldController worldController;
     private WeaponController weaponController;
+
+    private ArrayList<Anime> animations = new ArrayList<>();
 
     private Game game;
 
@@ -38,7 +44,7 @@ public class GameController {
         weaponController.update(playerX, playerY);
 
         updateLabels(stage);
-
+        showAnimations(Main.getBatch(), delta);
         // if (game.abilityMenu) {
         // game.pauseGame();
         // App.showDialog("test", () -> {
@@ -47,6 +53,19 @@ public class GameController {
         // }, stage);
         // }
 
+    }
+
+    private void showAnimations(Batch batch, float delta) {
+        for (int i = 0; i < animations.size(); i++) {
+            Anime animation = animations.get(i);
+            animation.update(delta);
+            animation.draw(batch);
+
+            if (animation.isFinished()) {
+                animations.remove(i);
+                i--;
+            }
+        }
     }
 
     public void pauseGame() {
@@ -82,8 +101,10 @@ public class GameController {
                 App.getSkin());
         Label XPLabel = new Label("XP: " + player.getXp(), App.getSkin());
 
-        // Label playerWidth = new Label("Player Width: " + player.getRect().getWidth(), App.getSkin());
-        // Label playerHeight = new Label("Player Height: " + player.getRect().getHeight(), App.getSkin());
+        // Label playerWidth = new Label("Player Width: " + player.getRect().getWidth(),
+        // App.getSkin());
+        // Label playerHeight = new Label("Player Height: " +
+        // player.getRect().getHeight(), App.getSkin());
 
         int playerXP = player.XPGainedForNextLevel();
         int neededXP = player.XPNeededForNextLevel();
@@ -181,5 +202,9 @@ public class GameController {
 
     public Game getGame() {
         return game;
+    }
+
+    public void addAnimation(Anime animation) {
+        animations.add(animation);
     }
 }

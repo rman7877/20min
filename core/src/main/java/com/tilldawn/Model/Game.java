@@ -26,6 +26,9 @@ public class Game {
 
     private GameController controller;
 
+    private boolean won = false;
+    private boolean ended = false;
+
     public boolean abilityMenu = false;
 
     GameView gameView;
@@ -54,6 +57,8 @@ public class Game {
                     }
 
                 } else {
+                    ended = true;
+                    won = true;
                     timer.cancel();
                 }
             }
@@ -90,7 +95,6 @@ public class Game {
                 controller.getWorldController().generateTentacleMonster(count);
             });
     }
-
 
     public void decreaseRemainingTime(int amount) {
         this.remainingTime -= amount;
@@ -134,6 +138,22 @@ public class Game {
 
     public static void setGame(Game game) {
         Game.game = game;
+    }
+
+    public boolean isWon() {
+        return won;
+    }
+
+    public void setWon(boolean won) {
+        this.won = won;
+    }
+
+    public boolean isEnded() {
+        return ended;
+    }
+
+    public void setEnded(boolean ended) {
+        this.ended = ended;
     }
 
     public GameView getGameView() {

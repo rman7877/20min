@@ -107,7 +107,7 @@ public class MainMenuView extends View {
         talentButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // controller.talent();
+                Main.changeMenu(Menu.TALENT_MENU);
             }
         });
 

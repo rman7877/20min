@@ -120,8 +120,12 @@ public class PauseMenu extends View implements InputProcessor {
         giveUpButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+
+                Game.getGame().setEnded(true);
+                Main.getMain().setScreen(GameView.getGameView());
+                Game.getGame().resumeGame();
                 // Game.getGame().giveUp();
-                Main.changeMenu(Menu.MAIN_MENU);
+                // Main.changeMenu(Menu.MAIN_MENU);
             }
         });
 

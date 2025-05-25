@@ -26,6 +26,14 @@ public class GameAssetManager {
     private final int eyebatFrameCount = 4;
     private final Animation<Sprite> eyebatAnimation = getAnimationByFirstSprite(eyebatPath, eyebatFrameCount);
 
+    private final String damagePath = "assets\\Sprite\\T\\T_LunaBlackHoleDamage_0.png";
+    private final int damageFrameCount = 3;
+    private final Animation<Sprite> damageAnimation = getAnimationByFirstSprite(damagePath, damageFrameCount);
+
+    private final String deathPath = "assets\\Sprite\\DeathFX\\DeathFX_0.png";
+    private final int deathFrameCount = 4;
+    private final Animation<Sprite> deathAnimation = getAnimationByFirstSprite(deathPath, deathFrameCount);
+
     private final String eyebatBulletPath = "assets\\Sprite\\T\\T_EyeBat_EM.png";
 
     private final String elderPath = "assets\\Sprite\\ElderBrain\\ElderBrain.png";
@@ -69,6 +77,14 @@ public class GameAssetManager {
         return eyebatAnimation;
     }
 
+    public Animation<Sprite> getDamageAnimation() {
+        return damageAnimation;
+    }
+
+    public Animation<Sprite> getDeathAnimation() {
+        return deathAnimation;
+    }
+
     public Sprite getEyebatSprite() {
         return getSpriteByPath(eyebatPath);
     }
@@ -100,7 +116,6 @@ public class GameAssetManager {
     public Animation<Sprite> getAnimationByFirstSprite(String path, int frameCount) {
         Sprite[] frames = new Sprite[frameCount];
 
-        // حذف کامل شماره و پسوند از انتهای فایل
         int lastUnderscore = path.lastIndexOf('_');
         int dotPng = path.lastIndexOf(".png");
 

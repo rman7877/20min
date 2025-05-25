@@ -11,42 +11,44 @@ public enum HeroType {
                     "assets/Heros/Shana/idle/4.png", "assets/Heros/Shana/idle/5.png", "assets/Heros/Shana/idle/6.png" },
             new String[] { "assets/Heros/Shana/run/1.png", "assets/Heros/Shana/run/2.png",
                     "assets/Heros/Shana/run/3.png",
-                    "assets/Heros/Shana/run/4.png" }),
+                    "assets/Heros/Shana/run/4.png" },"Shana is a balanced hero with moderate health and speed."),
     DIAMOND(7, 10, new String[] { "assets/Heros/Diamond/idle/1.png", "assets/Heros/Diamond/idle/2.png",
             "assets/Heros/Diamond/idle/3.png",
             "assets/Heros/Diamond/idle/4.png", "assets/Heros/Diamond/idle/5.png", "assets/Heros/Diamond/idle/6.png" },
             new String[] { "assets/Heros/Diamond/run/1.png", "assets/Heros/Diamond/run/2.png",
                     "assets/Heros/Diamond/run/3.png",
-                    "assets/Heros/Diamond/run/4.png" }),
+                    "assets/Heros/Diamond/run/4.png" },"Diamond is a tanky hero with high health but low speed."),
     SCARLET(3, 5, new String[] { "assets/Heros/Scarlet/idle/1.png", "assets/Heros/Scarlet/idle/2.png",
             "assets/Heros/Scarlet/idle/3.png",
             "assets/Heros/Scarlet/idle/4.png", "assets/Heros/Scarlet/idle/5.png", "assets/Heros/Scarlet/idle/6.png" },
             new String[] { "assets/Heros/Scarlet/run/1.png", "assets/Heros/Scarlet/run/2.png",
                     "assets/Heros/Scarlet/run/3.png",
-                    "assets/Heros/Scarlet/run/4.png" }),
+                    "assets/Heros/Scarlet/run/4.png" },"Scarlet is a fast hero with low health, ideal for quick maneuvers."),
     LILITH(5, 3, new String[] { "assets/Heros/Lilith/idle/1.png", "assets/Heros/Lilith/idle/2.png",
             "assets/Heros/Lilith/idle/3.png",
             "assets/Heros/Lilith/idle/4.png", "assets/Heros/Lilith/idle/5.png", "assets/Heros/Lilith/idle/6.png" },
             new String[] { "assets/Heros/Lilith/run/1.png", "assets/Heros/Lilith/run/2.png",
                     "assets/Heros/Lilith/run/3.png",
-                    "assets/Heros/Lilith/run/4.png" }),
+                    "assets/Heros/Lilith/run/4.png" },"Lilith is a versatile hero with balanced health and speed, suitable for various playstyles."),
     DASHER(2, 10, new String[] { "assets/Heros/Dasher/idle/1.png", "assets/Heros/Dasher/idle/2.png",
             "assets/Heros/Dasher/idle/3.png",
             "assets/Heros/Dasher/idle/4.png", "assets/Heros/Dasher/idle/5.png", "assets/Heros/Dasher/idle/6.png" },
             new String[] { "assets/Heros/Dasher/run/1.png", "assets/Heros/Dasher/run/2.png",
                     "assets/Heros/Dasher/run/3.png",
-                    "assets/Heros/Dasher/run/4.png" });
+                    "assets/Heros/Dasher/run/4.png" },"Dasher is a high-speed hero with low health, perfect for hit-and-run tactics."),;
 
     private int health;
     private int speed;
     private String[] idlePath;
     private String[] runPath;
+    private String description;
 
-    HeroType(int health, int speed, String[] idlePath, String[] runPath) {
+    HeroType(int health, int speed, String[] idlePath, String[] runPath,String description) {
         this.health = health;
         this.speed = speed;
         this.idlePath = idlePath;
         this.runPath = runPath;
+        this.description = description;
     }
 
     public int getHealth() {
@@ -95,6 +97,10 @@ public enum HeroType {
             heroTypes[i] = HeroType.values()[i].name();
         }
         return heroTypes;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

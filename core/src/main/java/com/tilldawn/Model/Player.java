@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -65,8 +66,7 @@ public class Player {
     }
 
     public int XPNeededForNextLevel() {
-        // return level * 20;
-        return level * 2;
+        return level * 20;
     }
 
     public int XPGainedForNextLevel() {
@@ -211,9 +211,13 @@ public class Player {
 
     public void takeDamage(int damage) {
         this.health -= damage;
-        if (this.health < 0) {
+        if (this.health <= 0) {
             this.health = 0;
+            Game.getGame().setEnded(true);
         }
+        Animation<Sprite> hurtAnimation = GameAssetManager.getGameAssetManager().getDamageAnimation();
+        Game.getGame().getController()
+                .addAnimation(new Anime(hurtAnimation, getX() + rect.getWidth() / 2, getY() + rect.getHeight() / 2));
     }
 
 }

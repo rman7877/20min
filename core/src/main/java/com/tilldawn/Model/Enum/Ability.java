@@ -4,11 +4,17 @@ import com.tilldawn.Model.Player;
 import com.tilldawn.Model.Weapon;
 
 public enum Ability {
-    VITALITY,
-    DAMAGER,
-    PROCREASE,
-    AMOCREASE,
-    SPEEDY;
+    VITALITY("Increase your maximum health by 1."),
+    DAMAGER("Increase your weapon damage by 25% for 10 seconds."),
+    PROCREASE("Increase your weapon projectile count by 1."),
+    AMOCREASE("Increase your weapon maximum ammo by 5."),
+    SPEEDY("Increase your movement speed by 100% for 10 seconds.");
+
+    private String description;
+
+    Ability(String description) {
+        this.description = description;
+    }
 
     private void setVitility(Player player) {
         player.setMaxHealth(player.getMaxHealth() + 1);
@@ -70,6 +76,10 @@ public enum Ability {
         }
         player.addAbility(this);
 
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

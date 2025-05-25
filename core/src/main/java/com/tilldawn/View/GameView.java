@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -78,10 +79,6 @@ public class GameView extends View implements InputProcessor {
     }
 
     public static GameView getGameView() {
-        // if (gameView == null) {
-        // gameView = new GameView(App.getApp().getSkin(), GameTime.NORMAL,
-        // HeroType.WARRIOR, WeaponType.SWORD);
-        // }
         return gameView;
     }
 
@@ -106,15 +103,31 @@ public class GameView extends View implements InputProcessor {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this);
 
+        Pixmap original = new Pixmap(Gdx.files.internal("assets\\cursor.png"));
+        Pixmap resized = new Pixmap(64, 64, original.getFormat());
+        resized.drawPixmap(original,
+                0, 0, original.getWidth(), original.getHeight(),
+                0, 0, 16, 16);
+        Cursor cursor = Gdx.graphics.newCursor(resized, 0, 0);
+        Gdx.graphics.setCursor(cursor);
+        original.dispose();
+        resized.dispose();
+
     }
 
     @Override
     public void render(float v) {
 
-        if (isPaused || Game.getGame().abilityMenu) {
+        if (isPaused || Game.getGame().abilityMenu || Game.getGame().isEnded()) {
             Game.getGame().pauseGame();
-            Main.changeMenu(Menu.PAUSE_MENU);
-            return;
+            if (Game.getGame().isEnded()) {
+                Main.changeMenu(Menu.END_GAME_MENU);
+                return;
+                // dispose();
+            } else {
+                Main.changeMenu(Menu.PAUSE_MENU);
+                return;
+            }
         }
 
         ScreenUtils.clear(0, 0, 0, 1);
@@ -133,9 +146,11 @@ public class GameView extends View implements InputProcessor {
         Main.getBatch().end();
 
         // Main.getBatch().draw(
-        //         circleTexture,
-        //         (Gdx.graphics.getWidth() + Game.getGame().getPlayer().getRect().getWidth()) / 2f - 40,
-        //         (Gdx.graphics.getHeight() + Game.getGame().getPlayer().getRect().getHeight()) / 2f - 40);
+        // circleTexture,
+        // (Gdx.graphics.getWidth() + Game.getGame().getPlayer().getRect().getWidth()) /
+        // 2f - 40,
+        // (Gdx.graphics.getHeight() + Game.getGame().getPlayer().getRect().getHeight())
+        // / 2f - 40);
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
@@ -143,14 +158,13 @@ public class GameView extends View implements InputProcessor {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(1, 1, 1, 0.3f); // سفید با شفافیت 30%
+        shapeRenderer.setColor(1, 1, 1, 0.3f);
         shapeRenderer.circle(
-        (Gdx.graphics.getWidth() + Game.getGame().getPlayer().getRect().getWidth()) /
-        2f,
-        (Gdx.graphics.getHeight() + Game.getGame().getPlayer().getRect().getHeight())
-        / 2f,
-        40
-        );
+                (Gdx.graphics.getWidth() + Game.getGame().getPlayer().getRect().getWidth()) /
+                        2f,
+                (Gdx.graphics.getHeight() + Game.getGame().getPlayer().getRect().getHeight())
+                        / 2f,
+                40);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
@@ -179,7 +193,7 @@ public class GameView extends View implements InputProcessor {
     @Override
     public void dispose() {
         // if (circleTexture != null)
-        //     circleTexture.dispose();
+        // circleTexture.dispose();
         stage.dispose();
         shapeRenderer.dispose();
     }
@@ -233,6 +247,10 @@ public class GameView extends View implements InputProcessor {
         if (i == Keys.V) {
             Ability.PROCREASE.setAbility(Game.getGame().getPlayer(),
                     Game.getGame().getController().getWeaponController().getWeapon());
+            return true;
+        }
+        if (i == Keys.Q) {
+            Game.getGame().getWeapon().setAutoReload(!Game.getGame().getWeapon().isAutoReload());
             return true;
         }
         if (i == Keys.F) {

@@ -44,7 +44,6 @@ public class WorldController {
         updateEyebatBullets();
         updateSeeds();
 
-        // Update world state
     }
 
     public void updateSeeds() {
@@ -52,7 +51,6 @@ public class WorldController {
         while (seedIterator.hasNext()) {
             Seed seed = seedIterator.next();
             seed.getSprite().draw(Main.getBatch());
-            // Check if the seed touches the player
             if (seed.getRect().intersects(playerController.getPlayer().getRect())) {
                 playerController.getPlayer().increaseXp(3);
                 seedIterator.remove(); // Safely remove seed during iteration
@@ -68,8 +66,7 @@ public class WorldController {
 
             bullet.update();
             bullet.draw();
-            // Check if the bullet touches the player
-            if (bullet.getRect().intersects(playerController.getPlayer().getRect())) {
+            if (bullet.getRect().intersects(playerController.getPlayer().getRect()) && !playerController.getPlayer().isInvincible()) {
                 playerController.getPlayer().takeDamage(bullet.getDamage());
                 bulletIterator.remove(); // Safely remove bullet during iteration
             }
@@ -88,7 +85,6 @@ public class WorldController {
                 Elder elder = (Elder) enemy;
                 elder.dash();
             }
-            // check if the enemy touches the player
             if (enemy.getRect().intersects(playerController.getPlayer().getRect()) && !playerController.getPlayer().isInvincible()) {
                 Player player = playerController.getPlayer();
                 player.takeDamage(1);

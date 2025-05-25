@@ -77,6 +77,11 @@ public class User {
         this.defualtGameTime = GameTime.TEN;
     }
 
+    public void update(int score, int kills, int longestSurvivalTime) {
+        this.score += score;
+        this.kills += kills;
+        this.longestSurvivalTime = Math.max(this.longestSurvivalTime, longestSurvivalTime);
+    }
 
 
     public Image getAvatar() {

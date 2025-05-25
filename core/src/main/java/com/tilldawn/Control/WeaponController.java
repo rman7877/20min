@@ -105,7 +105,7 @@ public class WeaponController {
                 Enemy enemy = enemyIterator.next();
 
                 if (!(enemy instanceof Tree) && bullet.getRect().intersects(enemy.getRect())) {
-                    enemy.takeDamage(bullet.getDamage());
+                    enemy.takeDamage(bullet.getDamage(),bullet.getDirection());
                     bulletIterator.remove();
                     break;
                 }

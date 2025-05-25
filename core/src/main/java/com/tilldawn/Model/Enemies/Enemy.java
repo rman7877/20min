@@ -2,8 +2,11 @@ package com.tilldawn.Model.Enemies;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+import com.tilldawn.Model.Anime;
 import com.tilldawn.Model.CollisionRect;
 import com.tilldawn.Model.Game;
+import com.tilldawn.Model.GameAssetManager;
 
 public abstract class Enemy {
 
@@ -98,12 +101,23 @@ public abstract class Enemy {
         getRect().setY(getRect().getY() + deltaY);
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, Vector2 direction) {
         hp -= damage;
         if (hp <= 0) {
             Game.getGame().getWorld().removeEnemy(this);
             Game.getGame().getController().getWorldController().dropSeed(getRect().getX(), getRect().getY());
             Game.getGame().increaseKills(1);
+            Animation<Sprite> deathAnimation = GameAssetManager.getGameAssetManager().getDeathAnimation();
+            Game.getGame().getController().addAnimation(new Anime(deathAnimation, getRect().getX(), getRect().getY()));
+        } else {
+            float newX = getRect().getX() + direction.x * 50;
+            float newY = getRect().getY() - direction.y * 50;
+
+            rect.setX(newX);
+            rect.setY(newY);
+
+            getSprite().setPosition(newX, newY);
+
         }
     }
 

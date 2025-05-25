@@ -2,6 +2,7 @@ package com.tilldawn.Model.Enum;
 
 import com.tilldawn.Model.App;
 import com.tilldawn.View.AppView;
+import com.tilldawn.View.EndGameView;
 import com.tilldawn.View.GameView;
 import com.tilldawn.View.MainMenuView;
 import com.tilldawn.View.PauseMenu;
@@ -10,6 +11,7 @@ import com.tilldawn.View.ProfileView;
 import com.tilldawn.View.ScoreboardView;
 import com.tilldawn.View.SignInView;
 import com.tilldawn.View.SignUpView;
+import com.tilldawn.View.TalentView;
 import com.tilldawn.View.View;
 
 public enum Menu {
@@ -21,7 +23,9 @@ public enum Menu {
     SCOREBOARD_MENU(new ScoreboardView(App.getSkin())),
     // GAME_MENU(new GameView(App.getSkin())),
     PRE_GAME_MENU(new PregameView(App.getSkin())),
-    PAUSE_MENU(new PauseMenu(App.getSkin()));
+    PAUSE_MENU(new PauseMenu(App.getSkin())),
+    END_GAME_MENU(new EndGameView(App.getSkin())),
+    TALENT_MENU(new TalentView(App.getSkin()));
 
     private View view;
 
@@ -49,6 +53,10 @@ public enum Menu {
                 return new PregameView(App.getSkin());
             case PAUSE_MENU:
                 return new PauseMenu(App.getSkin());
+            case END_GAME_MENU:
+                return new EndGameView(App.getSkin());
+            case TALENT_MENU:
+                return new TalentView(App.getSkin());
             
             default:
                 return null;
