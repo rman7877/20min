@@ -26,20 +26,26 @@ public class GameController {
         this.weaponController = weaponController;
     }
 
-    public void updateGame(Stage stage) {
+    public void updateGame(Stage stage,float delta) {
         float playerX = playerController.getPlayer().getX();
         float playerY = playerController.getPlayer().getY();
 
-        worldController.update();
+        worldController.update(delta);
         playerController.update(playerX, playerY);
         weaponController.update(playerX, playerY);
+
         updateLabels(stage);
     }
+
 
     public int mouseX = 0;
     public int mouseY = 0;
     private int graphicsMiddleX = Gdx.graphics.getWidth() / 2;
     private int graphicsMiddleY = Gdx.graphics.getHeight() / 2;
+
+    public float angle = 0;
+    public float bulletX = 0;
+    public float bulletY = 0;
 
     public void updateLabels(Stage stage) {
         stage.clear();
@@ -57,15 +63,19 @@ public class GameController {
         Label playerX = new Label("Player X: " + getPlayerController().getPlayer().getX(), App.getSkin());
         Label playerY = new Label("Player Y: " + getPlayerController().getPlayer().getY(), App.getSkin());
 
-        Label treeX = new Label("Tree X: " + getWorldController().getWorld().getEnemies().get(0).getRect().getX(),
-                App.getSkin());
-        Label treeY = new Label("Tree Y: " + getWorldController().getWorld().getEnemies().get(0).getRect().getY(),
-                App.getSkin());
+        // Label treeX = new Label("Tree X: " + getWorldController().getWorld().getEnemies().get(0).getRect().getX(),
+        //         App.getSkin());
+        // Label treeY = new Label("Tree Y: " + getWorldController().getWorld().getEnemies().get(0).getRect().getY(),
+        //         App.getSkin());
 
-        Label mouseXLabel = new Label("Mouse X: " + mouseX, App.getSkin());
-        Label mouseYLabel = new Label("Mouse Y: " + mouseY, App.getSkin());
-        Label graphicsMiddleXLabel = new Label("Graphics Middle X: " + (graphicsMiddleX - mouseX), App.getSkin());
-        Label graphicsMiddleYLabel = new Label("Graphics Middle Y: " + (graphicsMiddleY - mouseY), App.getSkin());
+        // Label mouseXLabel = new Label("Mouse X: " + mouseX, App.getSkin());
+        // Label mouseYLabel = new Label("Mouse Y: " + mouseY, App.getSkin());
+        // Label graphicsMiddleXLabel = new Label("Graphics Middle X: " + (graphicsMiddleX - mouseX), App.getSkin());
+        // Label graphicsMiddleYLabel = new Label("Graphics Middle Y: " + (graphicsMiddleY - mouseY), App.getSkin());
+
+        // Label angleLabel = new Label("Angle: " + angle, App.getSkin());
+        // Label bulletXLabel = new Label("Bullet X: " + bulletX, App.getSkin());
+        // Label bulletYLabel = new Label("Bullet Y: " + bulletY, App.getSkin());
 
         Table table = new Table();
 
@@ -80,18 +90,22 @@ public class GameController {
         table.row();
         table.add(playerX).expandX().padTop(10);
         table.add(playerY).expandX().padTop(10);
-        table.add(treeX).expandX().padTop(10);
-        table.add(treeY).expandX().padTop(10);
+        // table.add(treeX).expandX().padTop(10);
+        // table.add(treeY).expandX().padTop(10);
 
-        table.row();
-        table.add(mouseXLabel).expandX().padTop(10);
-        table.add(mouseYLabel).expandX().padTop(10);
-        table.add(graphicsMiddleXLabel).expandX().padTop(10);
-        table.add(graphicsMiddleYLabel).expandX().padTop(10);
+        // table.row();
+        // table.add(mouseXLabel).expandX().padTop(10);
+        // table.add(mouseYLabel).expandX().padTop(10);
+        // table.add(graphicsMiddleXLabel).expandX().padTop(10);
+        // table.add(graphicsMiddleYLabel).expandX().padTop(10);
+
+        // table.row();
+        // table.add(angleLabel).expandX().padTop(10);
+        // table.add(bulletXLabel).expandX().padTop(10);
+        // table.add(bulletYLabel).expandX().padTop(10);
 
         stage.addActor(table);
     }
-
 
     public void handlePlayerMovement(int i) {
         playerController.handlePlayerRun(i);

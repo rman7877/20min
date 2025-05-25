@@ -1,19 +1,48 @@
 package com.tilldawn.Model.Enemies;
 
+import static com.tilldawn.Model.Enemies.Enemy.speed;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.tilldawn.Model.CollisionRect;
+import com.tilldawn.Model.Game;
+import com.badlogic.gdx.utils.Timer;
 
-public class Elder extends Enemy{
+public class Elder extends Enemy {
 
-    public Elder(int hp, Sprite sprite, Animation<Sprite> animation, CollisionRect rect) {
-        super(hp, sprite, animation, rect);
+    private static final float dashSpeedRatio = 500f; // Speed ratio for dashing
+
+    public Elder(Sprite sprite, Animation<Sprite> animation, CollisionRect rect) {
+        super(400, sprite, animation, rect);
     }
 
-    @Override
-    public void update() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public void dash() {
+        if (time > 5) {
+
+
+            float playerX = Game.getGame().getPlayer().getX();
+            float playerY = Game.getGame().getPlayer().getY();
+
+            float deltaX;
+            float deltaY;
+
+            if (playerX > getRect().getX()) {
+                deltaX = speed * dashSpeedRatio;
+            } else {
+                deltaX = -speed * dashSpeedRatio;
+            }
+
+            if (playerY > getRect().getY()) {
+                deltaY = speed * dashSpeedRatio;
+            } else {
+                deltaY = -speed * dashSpeedRatio;
+            }
+
+            movePosition(deltaX, deltaY);
+
+            time = 0;
+
+        }
     }
-    
+
 }

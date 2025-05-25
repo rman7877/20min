@@ -12,7 +12,7 @@ public class Tree extends Enemy {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
             
     }
 

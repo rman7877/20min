@@ -8,37 +8,36 @@ import com.tilldawn.Main;
 
 public class Bullet {
 
-    private Texture texture = GameAssetManager.getGameAssetManager().getBullet();
-    private Sprite sprite = new Sprite(texture);
+    private Sprite sprite;
     private int damage;
-    private float x;
-    private float y;
+
+    private CollisionRect rect;
 
     Vector2 direction;
 
-    private int speed = 10;
+    private int speed = 5;
 
-    public Bullet(float x, float y, Vector2 direction) {
-        sprite.setSize(20, 20);
-        this.x = x;
-        this.y = y;
+    public Bullet(Sprite sprite, CollisionRect rect, Vector2 direction) {
+        this.sprite = sprite;
+        this.rect = rect;
         this.direction = direction;
-        sprite.setPosition(x, y);
     }
 
     public void update() {
-        x += direction.x * speed;
-        y -= direction.y * speed;
-        sprite.setPosition(x, y);
+        rect.increaseX(direction.x * speed);
+        rect.decreaseY(direction.y * speed);
+        sprite.setPosition(rect.getX(), rect.getY());
+    }
+
+    public CollisionRect getRect() {
+        return rect;
     }
 
     public void draw() {
         sprite.draw(Main.getMain().getBatch());
     }
 
-    public Texture getTexture() {
-        return texture;
-    }
+
 
     public int getSpeed() {
         return speed;
@@ -53,11 +52,11 @@ public class Bullet {
     }
 
     public float getX() {
-        return x;
+        return rect.getX();
     }
 
     public float getY() {
-        return y;
+        return rect.getY();
     }
 
     public Vector2 getDirection() {

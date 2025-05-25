@@ -58,4 +58,24 @@ public class CollisionRect {
         this.height = height;
     }
 
+    public void increaseX(float dx) {
+        this.x += dx;
+    }
+
+    public void increaseY(float dy) {
+        this.y += dy;
+    }
+
+    public void decreaseX(float dx) {
+        this.x -= dx;
+    }
+
+    public void decreaseY(float dy) {
+        this.y -= dy;
+    }
+
+
+
+
+
 }

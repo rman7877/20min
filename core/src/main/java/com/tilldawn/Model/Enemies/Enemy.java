@@ -7,7 +7,7 @@ import com.tilldawn.Model.Game;
 
 public abstract class Enemy {
 
-    private static final float speed = 0.25f;
+    protected static final float speed = 0.25f;
 
     private int hp;
     private Sprite sprite;
@@ -15,7 +15,7 @@ public abstract class Enemy {
     private Animation<Sprite> animation;
 
 
-    private float time = 0;
+    protected float time = 0;
 
     public Enemy(int hp, Sprite sprite, Animation<Sprite> animation, CollisionRect rect) {
         this.hp = hp;
@@ -68,7 +68,10 @@ public abstract class Enemy {
         this.animation = animation;
     }
 
-    public void update() {
+    public void update(float delta) {
+
+        time += delta;
+
         float playerX = Game.getGame().getPlayer().getX();
         float playerY = Game.getGame().getPlayer().getY();
 

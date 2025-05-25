@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.tilldawn.Main;
+import com.tilldawn.Model.Bullet;
 import com.tilldawn.Model.CollisionRect;
 import com.tilldawn.Model.Game;
 import com.tilldawn.Model.GameAssetManager;
 import com.tilldawn.Model.World;
+import com.tilldawn.Model.Enemies.Elder;
 import com.tilldawn.Model.Enemies.Enemy;
 import com.tilldawn.Model.Enemies.Eyebat;
 import com.tilldawn.Model.Enemies.TentacleMonster;
@@ -32,19 +34,34 @@ public class WorldController {
         generateRandomTrees();
     }
 
-    public void update() {
+    public void update(float delta) {
         Main.getBatch().draw(backgroundSprite, backgroundSprite.getX(), backgroundSprite.getY());
-        updateEnemies();
+        updateEnemies(delta);
+        updateEyebatBullets();
         // Update world state
     }
 
-    public void updateEnemies() {
+    public void updateEyebatBullets() {
+        for (Bullet bullet : world.getEyebatBullets()) {
+            bullet.update();
+            bullet.draw();
+        }
+    }
+
+    public void updateEnemies(float delta) {
         for (Enemy enemy : world.getEnemies()) {
             enemy.getSprite().draw(Main.getBatch());
 
-            Animation<Sprite> enemyAnimation = enemy.getAnimation();
-            enemy.update();
-            showAnimation(enemyAnimation, enemy);
+            enemy.update(delta);
+            if (!(enemy instanceof Elder)) {
+                Animation<Sprite> enemyAnimation = enemy.getAnimation();
+                showAnimation(enemyAnimation, enemy);
+            }
+            else
+            {
+                Elder elder = (Elder) enemy;
+                elder.dash();
+            }
         }
     }
 
@@ -86,6 +103,9 @@ public class WorldController {
     }
 
     public void generateEyebat(int count) {
+        // if (world.getEyebats().size() >= 1)
+        // return;
+
         for (int i = 0; i < count; i++) {
             generateEyebat();
         }
@@ -106,6 +126,37 @@ public class WorldController {
         CollisionRect rect = new CollisionRect(x, y, eyebatSprite.getWidth(), eyebatSprite.getHeight());
 
         world.addEyebat(new Eyebat(eyebatSprite, eyebatAnimation, rect));
+    }
+
+    public void generateElder() {
+        Sprite elderSprite = GameAssetManager.getGameAssetManager().getElderSprite();
+
+        float x = (float) (Math.random() * Gdx.graphics.getWidth() - Gdx.graphics.getWidth() / 2)
+                + Game.getGame().getPlayer().getX();
+        float y = (float) (Math.random() * Gdx.graphics.getHeight() - Gdx.graphics.getHeight() / 2)
+                + Game.getGame().getPlayer().getY();
+
+        elderSprite.setPosition(x, y);
+        elderSprite.setSize(100, 100);
+
+        CollisionRect rect = new CollisionRect(x, y, elderSprite.getWidth(), elderSprite.getHeight());
+
+        world.setElder(new Elder(elderSprite, null, rect)); // Assuming Elder is an Enemy with no animation
+    }
+
+    public void throwEyebatBullet() {
+        for (Eyebat eyebat : world.getEyebats()) {
+
+            eyebat.throwBullet();
+            // if (eyebat.getTime() >= 1.0f) { // Check if enough time has passed to throw a
+            // bullet
+            // eyebat.throwBullet();
+            // eyebat.setTime(0); // Reset the time after throwing a bullet
+            // } else {
+            // eyebat.setTime(eyebat.getTime() + Gdx.graphics.getDeltaTime());
+            // }
+
+        }
     }
 
     public void generateRandomTrees() {

@@ -9,8 +9,6 @@ import com.tilldawn.Model.Enum.HeroType;
 public class Player {
 
     private Sprite sprite;
-    private float x;
-    private float y;
     private int health;
     private int speed;
     private CollisionRect rect;
@@ -46,11 +44,11 @@ public class Player {
     }
 
     public void setX(float x) {
-        this.x = x;
+        rect.setX(x);
     }
 
     public void setY(float y) {
-        this.y = y;
+        rect.setY(y);
     }
 
     public void setHealth(int health) {
@@ -85,11 +83,11 @@ public class Player {
     }
 
     public float getX() {
-        return x;
+        return rect.getX();
     }
 
     public float getY() {
-        return y;
+        return rect.getY();
     }
 
     public int getHealth() {

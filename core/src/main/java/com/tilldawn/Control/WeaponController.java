@@ -8,7 +8,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.tilldawn.Main;
 import com.tilldawn.Model.Bullet;
+import com.tilldawn.Model.CollisionRect;
 import com.tilldawn.Model.Game;
+import com.tilldawn.Model.GameAssetManager;
 import com.tilldawn.Model.Weapon;
 
 public class WeaponController {
@@ -59,10 +61,16 @@ public class WeaponController {
             float weaponY = Game.getGame().getWeapon().getY();
 
             float angle = getAngle(x, y);
-
             Vector2 direction = new Vector2(MathUtils.cos(angle), MathUtils.sin(angle));
 
-            Bullet bullet = new Bullet(weaponX, weaponY, direction);
+            Sprite bulletSprite = GameAssetManager.getGameAssetManager().getBulletSprite();
+            bulletSprite.setPosition(weaponX + 25, weaponY + 5);
+            bulletSprite.setSize(25, 25);
+
+            CollisionRect bulletRect = new CollisionRect(bulletSprite.getX(), bulletSprite.getY(),
+                    bulletSprite.getWidth(), bulletSprite.getHeight());
+
+            Bullet bullet = new Bullet(bulletSprite, bulletRect, direction);
             bullets.add(bullet);
 
             weapon.setAmmo(weapon.getAmmo() - 1);

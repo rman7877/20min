@@ -31,8 +31,22 @@ public class Game {
             public void run() {
                 if (remainingTime > 0) {
                     remainingTime--;
-                    checkTentacleMonsterRespawn();
-                    checkEyebatRespawn();
+
+                    if (remainingTime % 3 == 0) {
+                        checkTentacleMonsterRespawn();
+                        throwEyebatbullet();
+                    }
+
+                    if (remainingTime % 10 == 0) {
+                        checkEyebatRespawn();
+                        if (remainingTime * 2 < gameTime && world.getElder() == null) {
+
+                            Gdx.app.postRunnable(() -> {
+                                controller.getWorldController().generateElder();
+                            });
+                        }
+                    }
+
                 } else {
                     timer.cancel();
                 }
@@ -41,13 +55,11 @@ public class Game {
     }
 
     private void checkTentacleMonsterRespawn() {
-        if (remainingTime % 3 == 0) {
-            int count = getTime() / 30;
-            if (count > 0)
-                Gdx.app.postRunnable(() -> {
-                    controller.getWorldController().generateTentacleMonster(count);
-                });
-        }
+        int count = getTime() / 30;
+        if (count > 0)
+            Gdx.app.postRunnable(() -> {
+                controller.getWorldController().generateTentacleMonster(count);
+            });
     }
 
     private void checkEyebatRespawn() {
@@ -58,6 +70,12 @@ public class Game {
                     controller.getWorldController().generateEyebat(count);
                 });
         }
+    }
+
+    private void throwEyebatbullet() {
+        Gdx.app.postRunnable(() -> {
+            controller.getWorldController().throwEyebatBullet();
+        });
     }
 
     public Game(int gameTime, Player player, Weapon weapon, World world, OrthographicCamera camera) {
@@ -98,6 +116,10 @@ public class Game {
 
     public void setController(GameController controller) {
         this.controller = controller;
+    }
+
+    public GameController getController() {
+        return controller;
     }
 
     public void setGameTime(int gameTime) {

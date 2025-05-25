@@ -11,16 +11,23 @@ public class GameAssetManager {
     private static GameAssetManager gameAssetManager;
     private Skin skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
 
-    private final Texture bulletTexture = new Texture("assets\\bullet.png");
+    private final String bulletSprite = "assets\\bullet.png";
 
     private final String treePath = "assets/Sprite/T/T_TreeMonster_0.png";
     private final int treeFrameCount = 3;
+    private final Animation<Sprite> treeAnimation = getAnimationByFirstSprite(treePath, treeFrameCount);
 
     private final String tentacleMonsterPath = "assets/Sprite/TentacleIdle/TentacleIdle_0.png";
     private final int tentacleMonsterFrameCount = 4;
+    private final Animation<Sprite> tentacleMonsterAnimation = getAnimationByFirstSprite(tentacleMonsterPath, tentacleMonsterFrameCount);
 
-    private final String eyebatPath="assets\\Sprite\\T\\T_EyeBat_0.png";
+    private final String eyebatPath = "assets\\Sprite\\T\\T_EyeBat_0.png";
     private final int eyebatFrameCount = 4;
+    private final Animation<Sprite> eyebatAnimation = getAnimationByFirstSprite(eyebatPath, eyebatFrameCount);
+
+    private final String eyebatBulletPath = "assets\\Sprite\\T\\T_EyeBat_EM.png";
+
+    private final String elderPath= "assets\\Sprite\\ElderBrain\\ElderBrain.png";
 
     private final String backgroundPath = "assets/background.png";
 
@@ -31,9 +38,7 @@ public class GameAssetManager {
         return gameAssetManager;
     }
 
-    public Texture getBullet() {
-        return bulletTexture;
-    }
+
 
     public Skin getSkin() {
         return skin;
@@ -44,7 +49,7 @@ public class GameAssetManager {
     }
 
     public Animation<Sprite> getTreeAnimation() {
-        return getAnimationByFirstSprite(treePath, treeFrameCount);
+        return treeAnimation;
     }
 
     public Sprite getTreeSprite() {
@@ -52,7 +57,7 @@ public class GameAssetManager {
     }
 
     public Animation<Sprite> getTentacleMonsterAnimation() {
-        return getAnimationByFirstSprite(tentacleMonsterPath, tentacleMonsterFrameCount);
+        return tentacleMonsterAnimation;
     }
 
     public Sprite getTentacleMonsterSprite() {
@@ -60,15 +65,27 @@ public class GameAssetManager {
     }
 
     public Animation<Sprite> getEyebatAnimation() {
-        return getAnimationByFirstSprite(eyebatPath, eyebatFrameCount);
+        return eyebatAnimation;
     }
 
     public Sprite getEyebatSprite() {
         return getSpriteByPath(eyebatPath);
     }
 
+    public Sprite getEyebatBulletSprite() {
+        return getSpriteByPath(eyebatBulletPath);
+    }
+
     public Sprite getBackgroundSprite() {
         return getSpriteByPath(backgroundPath);
+    }
+
+    public Sprite getBulletSprite() {
+        return getSpriteByPath(bulletSprite);
+    }
+
+    public Sprite getElderSprite() {
+        return getSpriteByPath(elderPath);
     }
 
     public Sprite getSpriteByPath(String path) {

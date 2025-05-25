@@ -81,7 +81,7 @@ public class GameView extends View implements InputProcessor {
         Main.getBatch().setProjectionMatrix(camera.combined);
 
         Main.getBatch().begin();
-        controller.updateGame(stage);
+        controller.updateGame(stage,v);
 
         Main.getBatch().end();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -121,7 +121,7 @@ public class GameView extends View implements InputProcessor {
             return true;
         }
         if (i == Keys.G) {
-            controller.getWorldController().generateEyebat(1);
+            controller.getWorldController().generateElder();
             return true;
         }
         if (i == Keys.R) {
