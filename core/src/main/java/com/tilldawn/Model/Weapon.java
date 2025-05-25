@@ -26,7 +26,7 @@ public class Weapon {
         return type;
     }
 
-    public Sprite getSmgSprite() {
+    public Sprite getSprite() {
         return sprite;
     }
 
@@ -36,6 +36,14 @@ public class Weapon {
 
     public void setAmmo(int ammo) {
         this.ammo = ammo;
+    }
+
+    public float getX() {
+        return sprite.getX();
+    }
+
+    public float getY() {
+        return sprite.getY();
     }
 
 }

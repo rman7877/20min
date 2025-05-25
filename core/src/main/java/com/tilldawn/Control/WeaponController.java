@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.tilldawn.Main;
 import com.tilldawn.Model.Bullet;
+import com.tilldawn.Model.Game;
 import com.tilldawn.Model.Weapon;
 
 public class WeaponController {
@@ -19,11 +20,12 @@ public class WeaponController {
         this.weapon = weapon;
     }
 
-    public void update() {
-        weapon.getSmgSprite().draw(Main.getBatch());
+    public void update(float playerX, float playerY) {
+        Sprite weaponSprite = weapon.getSprite();
+        weaponSprite.setPosition(playerX + 25, playerY + 5);
+        weaponSprite.draw(Main.getBatch());
         updateBullets();
     }
-
 
     public void handleWeaponReload() {
         if (weapon.getAmmo() < weapon.getType().getMaxAmmo()) {
@@ -31,44 +33,46 @@ public class WeaponController {
         }
     }
 
-    public void handleWeaponRotation(int x, int y) {
-
-        Sprite smgSprite = weapon.getSmgSprite();
-
+    private float getAngle(int x, int y) {
         float weaponCenterX = (float) Gdx.graphics.getWidth() / 2;
         float weaponCenterY = (float) Gdx.graphics.getHeight() / 2;
 
         float angle = (float) Math.atan2(y - weaponCenterY, x - weaponCenterX);
+        return angle;
 
-        smgSprite.setRotation((float) 3.14-angle*MathUtils.radiansToDegrees);
+    }
+
+    public void handleWeaponRotation(int x, int y) {
+
+        Sprite smgSprite = weapon.getSprite();
+
+        float angle = getAngle(x, y);
+
+        smgSprite.setRotation((float) 3.14 - angle * MathUtils.radiansToDegrees);
 
     }
 
     public void handleWeaponShoot(int x, int y) {
         if (weapon.getAmmo() > 0) {
-            Bullet bullet = new Bullet(x, y);
+
+            float weaponX = Game.getGame().getWeapon().getX();
+            float weaponY = Game.getGame().getWeapon().getY();
+
+            float angle = getAngle(x, y);
+
+            Vector2 direction = new Vector2(MathUtils.cos(angle), MathUtils.sin(angle));
+
+            Bullet bullet = new Bullet(weaponX, weaponY, direction);
             bullets.add(bullet);
+
             weapon.setAmmo(weapon.getAmmo() - 1);
         }
     }
 
     public void updateBullets() {
         for (Bullet bullet : bullets) {
-
-            bullet.getSprite().draw(Main.getBatch());
-
-            Vector2 direction = new Vector2(Gdx.graphics.getWidth() / 2 - bullet.getX(),
-                    Gdx.graphics.getHeight() / 2 - bullet.getY()).nor();
-
-            bullet.getSprite().setPosition(bullet.getSprite().getX() - direction.x * bullet.getSpeed(),
-                    bullet.getSprite().getY() + direction.y * bullet.getSpeed());
-
-        }
-    }
-
-    public void moveAllBullets(int x, int y) {
-        for (Bullet bullet : bullets) {
-            bullet.getSprite().setPosition(bullet.getSprite().getX() + x, bullet.getSprite().getY() + y);
+            bullet.update();
+            bullet.draw();
         }
     }
 

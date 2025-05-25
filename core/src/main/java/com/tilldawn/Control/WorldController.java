@@ -30,9 +30,7 @@ public class WorldController {
     }
 
     public void update() {
-        backgroundX = playerController.getPlayer().getX();
-        backgroundY = playerController.getPlayer().getY();
-        Main.getBatch().draw(backgroundSprite, backgroundX, backgroundY);
+        Main.getBatch().draw(backgroundSprite,backgroundSprite.getX(),backgroundSprite.getY());
         updateEnemies();
         // Update world state
     }
@@ -79,6 +77,10 @@ public class WorldController {
 
             world.addTree(new Tree(treeSprite, treeAnimation, rect));
         }
+    }
+
+    public World getWorld() {
+        return world;
     }
 
 }

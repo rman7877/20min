@@ -1,6 +1,7 @@
 package com.tilldawn.Control;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -18,28 +19,44 @@ public class PlayerController {
         this.player = player;
     }
 
-    public void update() {
-        player.getSprite().draw(Main.getBatch());
+    public void update( float playerX, float playerY) {
+        Sprite playerSprite = player.getSprite();
+        playerSprite.setPosition(playerX, playerY); 
+        playerSprite.draw(Main.getBatch()); 
 
         if (player.isPlayerIdle())
             idleAnimation();
         else
             runAnimation();
 
+        handlePlayerMovement();
+
     }
 
+    public void handlePlayerMovement() {
+        if (Gdx.input.isKeyPressed(Input.Keys.A))
+            player.setX(player.getX() - player.getSpeed());
 
-    public void handlePlayerMovement(int i)
-    {
-        if( i == Keys.D || i == Keys.W)
-            rightPressed = true;
-        else if (i == Keys.A || i == Keys.S)
-            rightPressed = false;
+        if (Gdx.input.isKeyPressed(Input.Keys.D))
+            player.setX(player.getX() + player.getSpeed());
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W))
+            player.setY(player.getY() + player.getSpeed());
+
+        if (Gdx.input.isKeyPressed(Input.Keys.S))
+            player.setY(player.getY() - player.getSpeed());
+
+    }
+
+    public void handlePlayerRun(int i) {
         player.setPlayerIdle(false);
+        if (i == Keys.A || i == Keys.S)
+            rightPressed = false;
+        else
+            rightPressed = true;
     }
 
-    public void handlePlayerIdle()
-    {
+    public void handlePlayerIdle() {
         player.setPlayerIdle(true);
     }
 
@@ -48,7 +65,8 @@ public class PlayerController {
     }
 
     public void runAnimation() {
-        Animation<Sprite> animation = rightPressed ? player.getHeroType().getRunRightAnimation() : player.getHeroType().getRunLeftAnimation();
+        Animation<Sprite> animation = rightPressed ? player.getHeroType().getRunRightAnimation()
+                : player.getHeroType().getRunLeftAnimation();
         showAnimation(animation);
     }
 

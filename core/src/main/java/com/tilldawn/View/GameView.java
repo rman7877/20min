@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.Input.Keys;
@@ -36,18 +37,22 @@ public class GameView extends View implements InputProcessor {
     private Stage stage;
     private GameController controller;
 
+    private OrthographicCamera camera;
+
     public GameView(Skin skin, GameTime gameTime, HeroType heroType, WeaponType weaponType) {
+
         stage = new Stage(new ScreenViewport());
 
-        Game game = new Game(gameTime.getTime());
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         Player player = new Player(heroType);
-        PlayerController playerController = new PlayerController(player);
-
         World world = new World();
-        WorldController worldController = new WorldController(playerController, world);
-
         Weapon weapon = new Weapon(weaponType);
+
+        Game game = new Game(gameTime.getTime(), player, weapon, world, camera);
+        PlayerController playerController = new PlayerController(player);
+        WorldController worldController = new WorldController(playerController, world);
         WeaponController weaponController = new WeaponController(weapon);
 
         controller = new GameController(game, playerController, worldController, weaponController);
@@ -56,45 +61,26 @@ public class GameView extends View implements InputProcessor {
 
     @Override
     public void show() {
-        // stage = new Stage(new ScreenViewport());
+        stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this);
-
-        Label timeLabel = new Label(
-                String.format("Time: %02d:%02d", controller.getGame().getRemainingTime() / 60,
-                        controller.getGame().getRemainingTime() % 60),
-                App.getSkin());
-        Label killsLabel = new Label("Kills: " + controller.getGame().getKills(), App.getSkin());
-        Label ammoLabel = new Label("Ammo: " + controller.getWeaponController().getWeapon().getAmmo() + "/"
-                + controller.getWeaponController().getWeapon().getType().getMaxAmmo(), App.getSkin());
-        Label HPLabel = new Label("HP: " + controller.getPlayerController().getPlayer().getHealth(), App.getSkin());
-        Label levelLabel = new Label("Level: " + controller.getPlayerController().getPlayer().getLevel(),
-                App.getSkin());
-
-        Table table = new Table();
-
-        table.top();
-        table.setFillParent(true);
-        table.add(timeLabel).expandX().padTop(10);
-        table.add(killsLabel).expandX().padTop(10);
-        table.add(ammoLabel).expandX().padTop(10);
-        table.add(HPLabel).expandX().padTop(10);
-        table.add(levelLabel).expandX().padTop(10);
-
-        stage.addActor(table);
 
     }
 
     @Override
     public void render(float v) {
         ScreenUtils.clear(0, 0, 0, 1);
-        Main.getBatch().begin();
-        controller.updateGame();
-        
-        // stage.getCamera().position.set(controller.getPlayerController().getPlayer().getX(), 
-        //         controller.getPlayerController().getPlayer().getY(), 0);
-        // stage.getCamera().update();
 
-        // show();
+        camera.position.set(controller.getPlayerController().getPlayer().getX(),
+                controller.getPlayerController().getPlayer().getY(),
+                0);
+        camera.update();
+
+        // Use the camera's projection matrix:
+        Main.getBatch().setProjectionMatrix(camera.combined);
+
+        Main.getBatch().begin();
+        controller.updateGame(stage);
+
         Main.getBatch().end();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
@@ -160,6 +146,8 @@ public class GameView extends View implements InputProcessor {
 
     @Override
     public boolean touchDown(int i, int i1, int i2, int i3) {
+        controller.mouseX = i;
+        controller.mouseY = i1;
         controller.getWeaponController().handleWeaponShoot(i, i1);
         return false;
     }
@@ -181,6 +169,8 @@ public class GameView extends View implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int i, int i1) {
+        // controller.mouseX = i;
+        // controller.mouseY = i1;
         controller.getWeaponController().handleWeaponRotation(i, i1);
         return false;
     }
