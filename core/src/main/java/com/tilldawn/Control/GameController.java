@@ -40,11 +40,11 @@ public class GameController {
         updateLabels(stage);
 
         // if (game.abilityMenu) {
-        //     game.pauseGame();
-        //     App.showDialog("test", () -> {
-        //         game.abilityMenu = false;
-        //         game.resumeGame();
-        //     }, stage);
+        // game.pauseGame();
+        // App.showDialog("test", () -> {
+        // game.abilityMenu = false;
+        // game.resumeGame();
+        // }, stage);
         // }
 
     }
@@ -82,8 +82,8 @@ public class GameController {
                 App.getSkin());
         Label XPLabel = new Label("XP: " + player.getXp(), App.getSkin());
 
-        Label playerX = new Label("Player X: " + player.getX(), App.getSkin());
-        Label playerY = new Label("Player Y: " + player.getY(), App.getSkin());
+        // Label playerWidth = new Label("Player Width: " + player.getRect().getWidth(), App.getSkin());
+        // Label playerHeight = new Label("Player Height: " + player.getRect().getHeight(), App.getSkin());
 
         int playerXP = player.XPGainedForNextLevel();
         int neededXP = player.XPNeededForNextLevel();
@@ -128,6 +128,10 @@ public class GameController {
         table.add(HPLabel).expandX().padTop(10);
         table.add(levelLabel).expandX().padTop(10);
         table.add(XPLabel).expandX().padTop(10);
+        // table.row();
+
+        // table.add(playerWidth).expandX().padTop(10);
+        // table.add(playerHeight).expandX().padTop(10);
 
         // table.row();
         // table.add(playerX).expandX().padTop(10);

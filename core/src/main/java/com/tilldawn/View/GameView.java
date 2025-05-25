@@ -6,7 +6,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.Input.Keys;
@@ -44,9 +47,15 @@ public class GameView extends View implements InputProcessor {
 
     private boolean isPaused = false;
 
+    private ShapeRenderer shapeRenderer;
+
+    private Texture circleTexture;
+
     public GameView(Skin skin, GameTime gameTime, HeroType heroType, WeaponType weaponType) {
 
         stage = new Stage(new ScreenViewport());
+
+        shapeRenderer = new ShapeRenderer();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -76,8 +85,24 @@ public class GameView extends View implements InputProcessor {
         return gameView;
     }
 
+    private void createCircleTexture() {
+        int size = 80;
+        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+
+        pixmap.setBlending(Pixmap.Blending.None);
+        pixmap.setColor(1, 1, 1, 0.3f);
+        pixmap.fillCircle(size / 2, size / 2, size / 2);
+
+        circleTexture = new Texture(pixmap);
+        pixmap.dispose();
+    }
+
     @Override
     public void show() {
+        if (circleTexture == null) {
+            createCircleTexture();
+        }
+
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this);
 
@@ -106,15 +131,28 @@ public class GameView extends View implements InputProcessor {
         controller.updateGame(stage, v);
 
         Main.getBatch().end();
+
+        // Main.getBatch().draw(
+        //         circleTexture,
+        //         (Gdx.graphics.getWidth() + Game.getGame().getPlayer().getRect().getWidth()) / 2f - 40,
+        //         (Gdx.graphics.getHeight() + Game.getGame().getPlayer().getRect().getHeight()) / 2f - 40);
+
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
 
-        // if (Game.getGame().abilityMenu == true) {
-        // App.showDialog("Abilities", () -> {
-        // Game.getGame().abilityMenu = false;
-        // Game.getGame().resumeGame();
-        // }, stage);
-        // }
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(1, 1, 1, 0.3f); // سفید با شفافیت 30%
+        shapeRenderer.circle(
+        (Gdx.graphics.getWidth() + Game.getGame().getPlayer().getRect().getWidth()) /
+        2f,
+        (Gdx.graphics.getHeight() + Game.getGame().getPlayer().getRect().getHeight())
+        / 2f,
+        40
+        );
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
 
     }
 
@@ -140,7 +178,10 @@ public class GameView extends View implements InputProcessor {
 
     @Override
     public void dispose() {
-
+        // if (circleTexture != null)
+        //     circleTexture.dispose();
+        stage.dispose();
+        shapeRenderer.dispose();
     }
 
     @Override

@@ -180,6 +180,10 @@ public class Game {
         this.kills = kills;
     }
 
+    public void increaseKills(int amount) {
+        this.kills += amount;
+    }
+
     public Player getPlayer() {
         return player;
     }

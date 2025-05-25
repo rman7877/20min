@@ -14,7 +14,6 @@ public abstract class Enemy {
     private CollisionRect rect;
     private Animation<Sprite> animation;
 
-
     protected float time = 0;
 
     public Enemy(int hp, Sprite sprite, Animation<Sprite> animation, CollisionRect rect) {
@@ -104,8 +103,8 @@ public abstract class Enemy {
         if (hp <= 0) {
             Game.getGame().getWorld().removeEnemy(this);
             Game.getGame().getController().getWorldController().dropSeed(getRect().getX(), getRect().getY());
+            Game.getGame().increaseKills(1);
         }
     }
-
 
 }
